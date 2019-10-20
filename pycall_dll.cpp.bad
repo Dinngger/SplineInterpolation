@@ -1,0 +1,58 @@
+/*
+ * pycall_dll.cpp
+ * 
+ * Created Date: Monday, October 21st 2019, 1:38:50 am
+ * by Dinger
+ */
+
+#include "SplineInterpolation.hpp"
+#include <sstream>
+#define DLLEXPORT extern "C" __declspec(dllexport)
+
+DLLEXPORT double __stdcall getFirstY(double x) {
+    static const uint n = 3;
+    static SplineInterpolation SI(n);
+    static bool first = true;
+    if (first) {
+        first = false;
+        std::stringstream ss;
+        ss << "0   1     2   3  \n";
+        ss << "0   0.5   2   1.5\n";
+        for (uint i=0; i<n+1; i++) {
+            ss >> SI.X[i];
+        }
+        for (uint i=0; i<n+1; i++) {
+            ss >> SI.Y[i];
+        }
+        SI.firstBorderCondition[0] = 0.2;
+        SI.firstBorderCondition[1] = -1;
+        std::cout << "First Border Condition Solution:\n";
+        SI.solveFirstBorderCondition();
+        SI.sayResult();
+    }
+    return SI.getY(x);
+}
+
+DLLEXPORT double __stdcall getSecondY(double x) {
+    static const uint n = 3;
+    static SplineInterpolation SI(n);
+    static bool first = true;
+    if (first) {
+        first = false;
+        std::stringstream ss;
+        ss << "0   1     2   3  \n";
+        ss << "0   0.5   2   1.5\n";
+        for (uint i=0; i<n+1; i++) {
+            ss >> SI.X[i];
+        }
+        for (uint i=0; i<n+1; i++) {
+            ss >> SI.Y[i];
+        }
+        SI.secondBorderCondition[0] = -0.3;
+        SI.secondBorderCondition[1] = 3.3;
+        std::cout << "Second Border Condition Solution:\n";
+        SI.solveSecondBorderCondition();
+        SI.sayResult();
+    }
+    return SI.getY(x);
+}
